@@ -14,10 +14,10 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [image1]: ./output_images/test1_undistorted.png "Undistorted"
-[image2]: ./output_images/test1.jpg "Road Transformed"
-[image3]: ./output_images/binary_combo_example.jpg "Binary Example"
-[image4]: ./output_images/warped_straight_lines.jpg "Warp Example"
-[image5]: ./output_images/color_fit_lines.jpg "Fit Visual"
+[image2]: ./output_images/image_undistort.jpg "Road Transformed"
+[image3]: ./output_images/image_edge.jpg "Binary Example"
+[image4]: ./output_images/image_gray.png "Warp Example"
+[image5]: ./output_images/lane_line_poly.png "Fit Visual"
 [image6]: ./output_images/output.png "Output"
 [video1]: ./project_video_out.mp4 "Video"
 
@@ -46,6 +46,8 @@ I then used the output `objpoints` and `imgpoints` to compute the camera calibra
 #### 1. Provide an example of a distortion-corrected image.
 
 To demonstrate this step, I will describe how I apply the distortion correction to one of the test images like this one:
+I wrote a function called undistortImg(img, mtx, dist), img is the original image, mtx and dist are the output from the camera calibration process.
+Inside the function, simply apply the openCV undistort function, I get the undistorted image.
 ![alt text][image2]
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
@@ -123,3 +125,9 @@ Here's a [link to my video result](./project_video.mp4)
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
 Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+
+I used the camera calibration technique to get the factors needed to undistort the image to get an accurate image. Then I combined the gradient and color approach for edge detection. Then I warp the image and conver it to gray scale for detailed lane line detection. A slide window is used to initialize and reinitialize the detection. Then the polynomial coefficients are used to define an area in the new frame for faster lane piexl detection. Once the dection is done, I calculate the curvature of the lane lines and save all the lane line information in a class called Line(). I also check the detection results to see if the lane line are reasonable, the checked information include left and right line should have similiar curvature and roughly parallel. I also make sure the lane line distance between the two lines is reasonable.
+
+How ever, this method need to detect the lane line when there is no lane line-like noise, for the challenge video, it is not able to distinguish the lane line with the dark road seal and road curb.
+
+Hence, the algorithm should implement a method to check the lane line pixel color after the detection to make sure the "lane line" are really lane lines. If they are not, the algorithm should be able to avoid this wrong line and detect other pixels.
